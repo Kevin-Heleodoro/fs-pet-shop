@@ -25,9 +25,13 @@ if(nodeOption === 'read'){
 }
 
 if(nodeOption === 'create'){
+
+    if(process.argv.length < 6){
+        throwError('create AGE KIND NAME')
+    } else {
     const newPet = {}
     const {age, kind, name} = {age: process.argv[3], kind: process.argv[4], name: process.argv[5]}  
-    newPet['age'] = age
+    newPet['age'] = parseInt(age)
     newPet['kind'] = kind
     newPet['name'] = name
 
@@ -41,11 +45,13 @@ if(nodeOption === 'create'){
         fs.writeFile(`./pets.json`, jsonStr, (err)=>{
             if(err){console.error(err)}
             else{
-                console.log( jsonStr);
+                console.log(newPet);
             }
         })
     })
 }
+}
+
 
 
 if(nodeOption === 'update'){
@@ -56,7 +62,6 @@ if(nodeOption === 'destroy'){
 
 }
 
-
 function throwError(string){
     process.exitCode = 1
     console.error(`Usage: node pets.js ${string}`)
@@ -64,21 +69,13 @@ function throwError(string){
 
 
 
-// const fs=require("fs");
-   
-// const str = "Hello world";
-// const filename = "input.txt";
-   
-// fs.open(filename, "a", (err, fd)=>{
-//     if(err){
-//         console.log(err.message);
-//     }else{
-//         fs.write(fd, str, (err, bytes)=>{
-//             if(err){
-//                 console.log(err.message);
-//             }else{
-//                 console.log(bytes +' bytes written');
-//             }
-//         })        
-//     }
-// })
+
+
+// function readFile(){
+//     fs.readFile(`./pets.json`, `utf8`,(err, data)=>{
+//         if(err){console.error(err)}
+
+//         const pets = JSON.parse(data)
+//         return pets
+//     })
+// }
