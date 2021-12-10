@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.get('/pets',(req, res)=>{
     fs.readFile(petsPath,'utf8', (err, dataJSON)=>{
-        if(err){FiveHundredError(res)}
+        if(err){fiveHundredError(res)}
         else {
             res.setHeader('Content-Type', 'application/json')
             res.statusCode = 200
@@ -28,9 +28,9 @@ app.get('/pets/:id',(req,res)=>{
 
 
 app.post('/',(req, res)=>{
-    if(err){FiveHundredError(res)}
+    if(err){fiveHundredError(res)}
     else{
-        
+
 
 
         createPet(req, res)
@@ -45,7 +45,7 @@ app.listen(PORT,(err)=>{
 
 function petSearch(res, num){
     fs.readFile(petsPath, 'utf8', (err, dataJSON)=>{
-        if(err){FiveHundredError(res)}
+        if(err){fiveHundredError(res)}
         else {
             let pets = JSON.parse(dataJSON);
             let pet = JSON.stringify(pets[num]);
@@ -64,7 +64,7 @@ function createPet(req, res){
     newPet.kind = req.body.kind
 
     fs.readFile(petsPath, 'utf8', (err, dataJSON)=>{
-        if(err){FiveHundredError(res)}
+        if(err){fiveHundredError(res)}
         else{
             let pets = JSON.parse(dataJSON)
             pets.push(newPet)
@@ -82,7 +82,7 @@ function createPet(req, res){
     })
 }
 
-function FiveHundredError(res){
+function fiveHundredError(res){
     console.error(err.stack)
     res.statusCode = 500
     res.setHeader('Content-Type', 'text/plain')
