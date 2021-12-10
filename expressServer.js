@@ -27,6 +27,16 @@ app.get('/pets/:id',(req,res)=>{
 })
 
 
+app.post('/',(req, res)=>{
+    if(err){FiveHundredError(res)}
+    else{
+        
+
+
+        createPet(req, res)
+    }
+})
+
 app.listen(PORT,(err)=>{
     if(err){console.log(err)}
     console.log(`Listening at ${PORT}....`)
@@ -43,6 +53,31 @@ function petSearch(res, num){
             else{
                 petDataFound(res, pet)
             }
+        }
+    })
+}
+
+function createPet(req, res){
+    let newPet = {}
+    newPet.name = req.body.name
+    newPet.age = parseInt(req.body.age)
+    newPet.kind = req.body.kind
+
+    fs.readFile(petsPath, 'utf8', (err, dataJSON)=>{
+        if(err){FiveHundredError(res)}
+        else{
+            let pets = JSON.parse(dataJSON)
+            pets.push(newPet)
+            let newPetJSON = JSON.stringify(pets)
+
+            fs.writeFile(`./pets.json`, newPetJSON, (err)=>{
+                if(err){console.error(err)}
+                else{
+                    console.log(newPet);
+                    res.statusCode = 200
+                    res.json(newPet)
+                }
+            })
         }
     })
 }
