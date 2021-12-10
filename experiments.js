@@ -1,10 +1,5 @@
-
-let userUrl = '/pets/345'
-const petRegExp = new RegExp(/^\/pets(\/\d*)/);
-
-const found = petRegExp.test(userUrl) //true
-let petSearch = petRegExp.exec(userUrl); //object
-let petNum = petSearch[1].substr(1)
+const pet = Object.assign({age: 30, kind:"bird", name:"Steven"})
 
 
-console.log(petNum)
+// const {name} = user
+console.log(pet)

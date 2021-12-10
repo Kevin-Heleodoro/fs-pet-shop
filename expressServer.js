@@ -1,4 +1,5 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
 const fs = require('fs');
 const { restart } = require('nodemon');
 const path = require('path')
@@ -7,7 +8,6 @@ const PORT = 3000
 
 const app = express();
 app.use(express.json());
-
 
 app.get('/pets',(req, res)=>{
     fs.readFile(petsPath,'utf8', (err, dataJSON)=>{
@@ -26,14 +26,18 @@ app.get('/pets/:id',(req,res)=>{
     petSearch(res, idNum)
 })
 
-
-app.post('/',(req, res)=>{
-    if(err){fiveHundredError(res)}
+app.post(
+    '/',
+    body('name').isString(),
+    body('age').isNumeric(),
+    body('kind').isString(),
+    
+    (req, res)=>{
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){throwFourHundred(res, errors)}
     else{
-
-
-
-        createPet(req, res)
+        const pet = Object.assign({age: req.body['age'], kind:req.body['kind'], name:req.body['name']})
+        createPet(pet, res)
     }
 })
 
@@ -57,25 +61,20 @@ function petSearch(res, num){
     })
 }
 
-function createPet(req, res){
-    let newPet = {}
-    newPet.name = req.body.name
-    newPet.age = parseInt(req.body.age)
-    newPet.kind = req.body.kind
-
+function createPet(pet, res){
     fs.readFile(petsPath, 'utf8', (err, dataJSON)=>{
         if(err){fiveHundredError(res)}
         else{
             let pets = JSON.parse(dataJSON)
-            pets.push(newPet)
+            pets.push(pet)
             let newPetJSON = JSON.stringify(pets)
 
             fs.writeFile(`./pets.json`, newPetJSON, (err)=>{
                 if(err){console.error(err)}
                 else{
-                    console.log(newPet);
+                    console.log(pet);
                     res.statusCode = 200
-                    res.json(newPet)
+                    res.json(pet)
                 }
             })
         }
@@ -101,4 +100,7 @@ function petDataFound(res, data){
     res.statusCode = 200
     console.log(`Pet data found`)
     res.end(data)
+}
+function throwFourHundred(res, errors){
+    return res.status(400).json({errors :errors.array()});
 }
