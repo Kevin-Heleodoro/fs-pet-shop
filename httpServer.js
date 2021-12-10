@@ -5,17 +5,16 @@ const path = require('path')
 const http = require('http')
 const { type } = require('os')
 
-
 const PORT = 5555
 const dataPath = path.join(__dirname, 'pets.json');
-
 
 const server = http.createServer((req, res)=>{
     let userUrl = req.url
     const petRegExp = new RegExp(/^\/pets(\/\d*)/);
     const found = petRegExp.test(userUrl) //true
+    if(req.method === 'POST'){serverPost(req, res)}
 
-    if(req.method === 'GET' && req.url === '/pets'){
+    else if(req.method === 'GET' && req.url === '/pets'){
         fs.readFile(dataPath, 'utf8', (err, dataJSON)=>{
             if(err){FiveHundredError(res)}
             else {
@@ -44,7 +43,6 @@ const server = http.createServer((req, res)=>{
         res.setHeader('Content-Type', 'text/plain')
         res.end('Page not found')
     }
-    
 })
 
 server.listen(PORT,()=>{
@@ -70,6 +68,12 @@ function fourOhFour(res){
     res.setHeader('Content-Type', 'text/plain')
     // console.error(error.stack)
     res.end('Page not found')
+}
+
+function serverPost(req, res){
+    fs.readFile(dataPath, 'utf8',(err, dataJSON)=>{
+        
+    })
 }
 
 module.exports = server;
