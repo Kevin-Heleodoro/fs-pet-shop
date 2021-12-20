@@ -54,7 +54,7 @@ app.get('/pets/:id',(req,res)=>{
             let queriedPet = req.params.id
             let pets = JSON.parse(data);
             let pet = JSON.stringify(pets[queriedPet])
-            if(pet === undefined){fourOhFour(res)}
+            if(!pets[queriedPet]){fourOhFour(res)}
             else{
                 res.setHeader('Content-Type', 'text/plain')
                 res.statusCode = 200
@@ -74,6 +74,8 @@ app.patch(`/pets/:id`, (req, res)=>{
             const petUpdate = pets[petIndex];
             const reqBody = Object.assign({age: req.body['age'], kind: req.body['kind'], name: req.body['name']})
 
+            //for loop
+            
             if(reqBody.age){petUpdate.age = reqBody.age}
             if(reqBody.kind){petUpdate.kind = reqBody.kind}
             if(reqBody.name){petUpdate.name = reqBody.name}
@@ -88,6 +90,30 @@ app.patch(`/pets/:id`, (req, res)=>{
                 }
             })
             console.log(petUpdate)
+        }
+    })
+})
+
+app.delete(`/pets/:id`,(req, res)=>{
+    fs.readFile(petsPath, 'utf-8', (err, data)=>{
+        if(err)fiveHundredError(err);
+        else{
+            let index = req.params.id
+            let allPets = JSON.parse(data);
+            let toDelete = allPets[index]
+            if(toDelete === undefined)fourOhFour(res);
+            else {
+                allPets.splice(index, 1)
+                allPets = JSON.stringify(allPets)
+                fs.writeFile(petsPath, allPets, (err)=>{
+                    if(err)console.error(err);
+                    else{
+                        console.log(allPets)
+                        res.statusCode = 200
+                        res.json(allPets)
+                    }
+                })
+            }
         }
     })
 })
@@ -108,6 +134,6 @@ function fourOhFour(err){
     console.log(err);
     res.statusCode = 404
     res.setHeader('Content-Type', 'text/plain')
-    res.end(`Request pet does not exist`)
+    res.end(`Requested pet does not exist`)
 }
 
