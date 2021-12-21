@@ -71,14 +71,18 @@ app.patch(`/pets/:id`, (req, res)=>{
         else{
             let petIndex = req.params.id
             let pets = JSON.parse(data);
-            const petUpdate = pets[petIndex];
-            const reqBody = Object.assign({age: req.body['age'], kind: req.body['kind'], name: req.body['name']})
+            const petToUpdate = pets[petIndex];
 
-            //for loop
             
-            if(reqBody.age){petUpdate.age = reqBody.age}
-            if(reqBody.kind){petUpdate.kind = reqBody.kind}
-            if(reqBody.name){petUpdate.name = reqBody.name}
+            for(let key in req.body){
+                petToUpdate[key] = req.body[key]
+            }
+            
+            // const reqBody = Object.assign({age: req.body['age'], kind: req.body['kind'], name: req.body['name']})
+            
+            // if(reqBody.age){petToUpdate.age = reqBody.age}
+            // if(reqBody.kind){petToUpdate.kind = reqBody.kind}
+            // if(reqBody.name){petToUpdate.name = reqBody.name}
             let updatedPets = JSON.stringify(pets)
 
             fs.writeFile(petsPath, updatedPets, (err)=>{
@@ -86,10 +90,10 @@ app.patch(`/pets/:id`, (req, res)=>{
                 else{
                     console.log(pets)
                     res.statusCode = 200
-                    res.json(petUpdate)
+                    res.json(petToUpdate)
                 }
             })
-            console.log(petUpdate)
+            console.log(petToUpdate)
         }
     })
 })
