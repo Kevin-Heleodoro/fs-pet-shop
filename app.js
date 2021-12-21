@@ -1,4 +1,5 @@
 const express = require('express')
+const res = require('express/lib/response')
 const { set } = require('express/lib/response')
 const {Pool} = require('pg')
 
@@ -17,10 +18,8 @@ const app = express()
 //take body data in for post route
 app.use(express.json())
 
-//handle errors
-
 //get all
-app.get('/', async (req, res)=>{
+app.get('/pets', async (req, res)=>{
     try {
         const {rows} = await pool.query('SELECT * FROM pets')
         res.send(rows)
@@ -36,7 +35,7 @@ app.get('/pets/:id', async (req, res)=>{
         const {id} = req.params
         const {rows} = await pool.query('SELECT * FROM pets WHERE pet_id = $1', [id])
         if(!rows[0]){
-            throw new Error('Pet not found')
+            throw new Error('Pet not found') //there has to be a better way to handle this
         } else {
         res.send(rows[0])
         }
@@ -99,6 +98,22 @@ app.delete('/pets/:id', async (req, res)=>{
         res.statusCode = 500
         res.send(error.message)
     }
+})
+
+//err handler
+app.use((req, res, next)=>{
+    const error = new Error('Internal Server Error');
+    error.status = 500
+    next(error);
+})
+
+app.use((error, req, res, next)=>{
+    res.status(error.status || 500);
+    res.json({
+        error:{
+            message: error.message
+        }
+    })
 })
 
 app.listen(PORT, ()=>{
