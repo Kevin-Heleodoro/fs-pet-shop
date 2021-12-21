@@ -15,6 +15,7 @@ const pool = new Pool({
 const PORT = 7878
 const app = express()
 
+app.use(express.static('client'))
 //take body data in for post route
 app.use(express.json())
 
