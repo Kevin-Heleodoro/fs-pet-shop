@@ -13,3 +13,4 @@ router.get('/pets/:id', async(req,res)=>{
     const {rows} = await db.query('SELECT * FROM pets WHERE id = $1', [id])
     res.send(rows[0])
 })
+

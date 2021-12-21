@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint",
     "dev": "nodemon restfulExpressServer.js",
-    "test": "mocha"
+    "test": "mocha",
+    "db": "nodemon app.js"
   },
   "repository": {
     "type": "git",
